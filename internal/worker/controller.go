@@ -2,13 +2,15 @@ package worker
 
 import (
 	"fmt"
+	"load-tester/internal/report"
+	"load-tester/internal/types"
 	"sync"
 	"time"
 )
 
 func RunLoadTest(url string, totalRequests int, concurrency int) {
 	var wg sync.WaitGroup
-	results := make(chan Result, totalRequests)
+	results := make(chan types.Result, totalRequests)
 
 	requestsPerWorker := totalRequests / concurrency
 	remainder := totalRequests % concurrency
@@ -31,10 +33,10 @@ func RunLoadTest(url string, totalRequests int, concurrency int) {
 
 	endTime := time.Since(startTime)
 
-	processResults(results, endTime)
+	report.ProcessResults(results, endTime)
 }
 
-func processResults(results chan Result, duration time.Duration) {
+func processResults(results chan types.Result, duration time.Duration) {
 	statusCount := make(map[int]int)
 	totalRequests := 0
 

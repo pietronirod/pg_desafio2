@@ -4,14 +4,11 @@ import (
 	"net/http"
 	"sync"
 	"time"
+
+	"load-tester/internal/types"
 )
 
-type Result struct {
-	StatusCode int
-	Duration   time.Duration
-}
-
-func Worker(id int, url string, requests int, results chan<- Result, wg *sync.WaitGroup) {
+func Worker(id int, url string, requests int, results chan<- types.Result, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	client := &http.Client{}
@@ -22,11 +19,11 @@ func Worker(id int, url string, requests int, results chan<- Result, wg *sync.Wa
 		duration := time.Since(start)
 
 		if err != nil {
-			results <- Result{StatusCode: 0, Duration: duration}
+			results <- types.Result{StatusCode: 0, Duration: duration}
 			continue
 		}
 
-		results <- Result{StatusCode: resp.StatusCode, Duration: duration}
+		results <- types.Result{StatusCode: resp.StatusCode, Duration: duration}
 		resp.Body.Close()
 	}
 }

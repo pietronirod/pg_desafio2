@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"load-tester/internal/worker"
 
 	"github.com/spf13/cobra"
 )
@@ -18,11 +19,17 @@ var testCmd = &cobra.Command{
 	Use:   "test",
 	Short: "Executa um teste de carga",
 	Run: func(cmd *cobra.Command, args []string) {
+		if url == "" || requests <= 0 || concurrency <= 0 {
+			fmt.Println("Parâmetros inválidos. Use --url, --requests e --concurrency corretamente.")
+			return
+		}
+
 		fmt.Println("Iniciando teste de carga...")
 		fmt.Printf("URL: %s\n", url)
 		fmt.Printf("Total de Requests: %d\n", requests)
 		fmt.Printf("Concorrência: %d\n", concurrency)
 
+		worker.RunLoadTest(url, requests, concurrency)
 	},
 }
 

@@ -11,8 +11,14 @@ func ProcessResults(results chan types.Result, duration time.Duration) {
 	statusCount := make(map[int]int)
 	var totalRequests int
 	var totalDuration time.Duration
+	var timeouts int
 
 	for result := range results {
+		if result.StatusCode == -1 {
+			timeouts++
+			continue
+		}
+
 		statusCount[result.StatusCode]++
 		totalRequests++
 		totalDuration += result.Duration
@@ -27,6 +33,7 @@ func ProcessResults(results chan types.Result, duration time.Duration) {
 	fmt.Printf("Tempo total: %v\n", duration)
 	fmt.Printf("Total de requests: %d\n", totalRequests)
 	fmt.Printf("Tempo médio de resposta: %v\n", avgDuration)
+	fmt.Printf("Timeouts: %d\n", timeouts)
 
 	fmt.Println("\nDistribuicão de Status HTTP:")
 	for status, count := range statusCount {

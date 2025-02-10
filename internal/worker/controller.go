@@ -1,7 +1,6 @@
 package worker
 
 import (
-	"fmt"
 	"load-tester/internal/report"
 	"load-tester/internal/types"
 	"sync"
@@ -34,22 +33,4 @@ func RunLoadTest(url string, totalRequests int, concurrency int) {
 	endTime := time.Since(startTime)
 
 	report.ProcessResults(results, endTime)
-}
-
-func processResults(results chan types.Result, duration time.Duration) {
-	statusCount := make(map[int]int)
-	totalRequests := 0
-
-	for result := range results {
-		statusCount[result.StatusCode]++
-		totalRequests++
-	}
-
-	fmt.Println("\n--- Relatório Final ---")
-	fmt.Printf("Tempo total: %v\n", duration)
-	fmt.Printf("Total de requests: %d\n", totalRequests)
-
-	for status, count := range statusCount {
-		fmt.Printf("HTTP %d: %d vezes\n", status, count)
-	}
 }

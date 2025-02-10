@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"load-tester/internal/report"
 	"load-tester/internal/worker"
 
 	"github.com/spf13/cobra"
@@ -13,6 +14,7 @@ import (
 var url string
 var requests int
 var concurrency int
+var outputFormat string
 
 // testCmd represents the test command
 var testCmd = &cobra.Command{
@@ -29,7 +31,9 @@ var testCmd = &cobra.Command{
 		fmt.Printf("Total de Requests: %d\n", requests)
 		fmt.Printf("Concorrência: %d\n", concurrency)
 
-		worker.RunLoadTest(url, requests, concurrency)
+		results, duration := worker.RunLoadTest(url, requests, concurrency)
+
+		report.ProcessResults(results, duration, outputFormat)
 	},
 }
 
@@ -37,5 +41,6 @@ func init() {
 	testCmd.Flags().StringVar(&url, "url", "", "URL do serviço")
 	testCmd.Flags().IntVar(&requests, "requests", 10, "Número total de requests")
 	testCmd.Flags().IntVar(&concurrency, "concurrency", 2, "Número de chamadas simultâneas")
+	testCmd.Flags().StringVar(&outputFormat, "output", "console", "Formato de saída: console, json ou csv")
 	rootCmd.AddCommand(testCmd)
 }

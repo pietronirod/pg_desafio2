@@ -1,0 +1,4 @@
+services:
+  load-tester:
+    build: .
+    command: ["test", "--url=http://google.com", "--requests=100", "--concurrency=5"]
